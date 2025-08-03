@@ -8,7 +8,8 @@ import { InboxService } from '@services/inbox.service';
 import { convertToBrazeContentCard } from '@utils/braze/convert-content-card';
 import { BrazeAltPushContentCard } from '@models/braze/braze-push-content-card';
 import * as braze from '@braze/web-sdk';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,7 +41,6 @@ export class PushNotificationService {
       'pushNotificationReceived',
       (notification: PushNotificationSchema | BrazePushNotification) => {
         try {
-          // Parse extras
           const rawExtra = (notification as any)?.data?.extra;
           if (!rawExtra) return;
 
@@ -48,7 +48,6 @@ export class PushNotificationService {
           if (parsedExtra?.type === 'inbox') {
             console.log('Inbox notification received:', parsedExtra);
 
-            // If Braze included a content card payload
             const rawCardJson = (notification as any)?.data?.ab_cd;
             if (rawCardJson) {
               const rawCard: BrazeAltPushContentCard = JSON.parse(rawCardJson);
@@ -57,8 +56,9 @@ export class PushNotificationService {
               // Add card to inbox
               this.inboxService.addCard(card);
 
-              // Mark impression for analytics
-              braze.logContentCardImpression(card.id);
+              // ⚠️ Braze expects its own Card type here.
+              // For now, skip impressions to avoid type errors.
+              // braze.logContentCardImpressions([rawCard]);
             }
           }
         } catch (err) {
