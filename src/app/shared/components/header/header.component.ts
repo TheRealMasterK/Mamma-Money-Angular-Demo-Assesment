@@ -1,43 +1,28 @@
-import { Component, forwardRef, input, output } from '@angular/core';
-import { InboxButtonComponent } from '@components/inbox-button/inbox-button.component';
-import { IonToolbar, IonTitle, IonButton, IonIcon } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { arrowBack } from 'ionicons/icons';
+import { Component, Input } from '@angular/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+} from '@ionic/angular/standalone';
+// ✅ Use relative import to avoid alias resolution issues
+import { InboxButtonComponent } from '../inbox-button/inbox-button.component';
 
 @Component({
   selector: 'app-header',
-  template: ` <ion-toolbar>
-    @if (showBackButton()) {
-    <ion-button class="back-btn" (click)="backEvent.emit()" fill="clear" slot="start">
-      <ion-icon color="dark" name="arrow-back" slot="icon-only"></ion-icon>
-    </ion-button>
-    }
-    <ion-title> {{ title() }} </ion-title>
-    @if (showInboxButton()) {
-    <app-inbox-button slot="end"></app-inbox-button>
-    }
-  </ion-toolbar>`,
-  styles: [
-    `
-      ion-toolbar {
-        --min-height: 4rem;
-      }
-
-      ion-button {
-        font-size: 1.5rem;
-      }
-    `
-  ],
+  template: `
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Mama Money</ion-title>
+        <ion-buttons slot="end" *ngIf="showInboxButton">
+          <app-inbox-button slot="end"></app-inbox-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+  `,
   standalone: true,
-  imports: [IonToolbar, IonTitle, forwardRef(() => InboxButtonComponent), IonButton, IonIcon]
+  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, InboxButtonComponent],
 })
 export class HeaderComponent {
-  title = input('Mama Money');
-  showBackButton = input(false);
-  showInboxButton = input(false);
-  backEvent = output<void>();
-
-  constructor() {
-    addIcons({ arrowBack });
-  }
+  @Input() showInboxButton = false;
 }

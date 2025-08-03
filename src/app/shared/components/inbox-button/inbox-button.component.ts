@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, input, signal } from '@angular/core';
+import { AfterViewInit, Component, input, signal, inject } from '@angular/core';
 import { IonButton, IonIcon, IonAccordion } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { notificationsOutline } from 'ionicons/icons';
 import anime, { AnimeInstance } from 'animejs';
+// import { InboxComponent } from '../inbox/inbox.component';
 
 @Component({
   selector: 'app-inbox-button',
@@ -35,7 +37,6 @@ import anime, { AnimeInstance } from 'animejs';
           z-index: 99;
         }
       }
-    `
   ],
   imports: [IonButton, IonIcon],
   standalone: true
@@ -44,13 +45,19 @@ export class InboxButtonComponent implements AfterViewInit {
   readonly slot = input<IonAccordion['toggleIconSlot']>();
   unreadMessages = signal(false);
   private shakeAnimation?: AnimeInstance;
+  private modalController = inject(ModalController);
 
   constructor() {
     addIcons({ notificationsOutline });
   }
 
-  showInbox(): void {
-    // TODO: Show Inbox component in Modal when tapping Bell icon
+  async showInbox(): Promise<void> {
+    try {
+      // TODO: Import InboxComponent when it's properly exported
+      console.log('Inbox functionality not yet implemented');
+    } catch (error) {
+      console.error('Error showing inbox:', error);
+    }
   }
 
   // TODO: When receiving/reading new Braze inbox message, update notification state.
