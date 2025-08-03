@@ -6,10 +6,14 @@ import { PushNotificationService } from '@services/push-notification.service';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [IonApp, IonRouterOutlet]
+  imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor(private pushNotificationService: PushNotificationService) {
-    this.pushNotificationService.init();
+  constructor(
+    private readonly pushNotificationService: PushNotificationService
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.pushNotificationService.init();
   }
 }

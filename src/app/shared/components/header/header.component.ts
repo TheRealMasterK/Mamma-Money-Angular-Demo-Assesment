@@ -5,7 +5,8 @@ import {
   IonTitle,
   IonButtons,
 } from '@ionic/angular/standalone';
-// ✅ Use relative import to avoid alias resolution issues
+import { CommonModule } from '@angular/common';
+
 import { InboxButtonComponent } from '../inbox-button/inbox-button.component';
 
 @Component({
@@ -21,7 +22,14 @@ import { InboxButtonComponent } from '../inbox-button/inbox-button.component';
     </ion-header>
   `,
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, InboxButtonComponent],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    InboxButtonComponent,
+  ],
 })
 export class HeaderComponent {
   @Input() showInboxButton = false;

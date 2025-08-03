@@ -58,7 +58,7 @@ export class PushNotificationService {
               this.inboxService.addCard(card);
 
               // Mark impression for analytics
-              braze.logCardImpressions([card.id]);
+              braze.logContentCardImpression(card.id);
             }
           }
         } catch (err) {
