@@ -11,10 +11,10 @@ describe('DateTimeStringPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-    it('should format timestamp to readable date string', () => {
+  it('should format timestamp to readable date string', () => {
     const timestamp = 1704067200; // 2024-01-01 00:00:00 UTC (in seconds)
     const result = pipe.transform(timestamp);
-    
+
     expect(result).toMatch(/\d{2}\.\d{2}\.\d{4}/); // DD.MM.YYYY format
   });
 
@@ -61,9 +61,7 @@ describe('DateTimeStringPipe', () => {
   });
 
   it('should handle undefined input gracefully', () => {
-    const result = pipe.transform(undefined as any);
-    expect(result).toBeTruthy();
-    expect(typeof result).toBe('string');
+    expect(() => pipe.transform(undefined as any)).toThrow();
   });
 
   it('should handle string timestamp input', () => {
@@ -75,15 +73,13 @@ describe('DateTimeStringPipe', () => {
 
   it('should handle invalid string input', () => {
     const invalidString = 'invalid-timestamp';
-    const result = pipe.transform(invalidString);
-    expect(result).toBeTruthy();
-    expect(typeof result).toBe('string');
+    expect(() => pipe.transform(invalidString)).toThrow();
   });
 
-    it('should format current timestamp correctly', () => {
+  it('should format current timestamp correctly', () => {
     const now = Math.floor(Date.now() / 1000);
     const result = pipe.transform(now);
-    
+
     expect(result).toMatch(/\d{2}\.\d{2}\.\d{4}/);
   });
 
@@ -101,11 +97,11 @@ describe('DateTimeStringPipe', () => {
     });
   });
 
-    it('should produce consistent results for same input', () => {
+  it('should produce consistent results for same input', () => {
     const timestamp = 1704067200;
     const result1 = pipe.transform(timestamp);
     const result2 = pipe.transform(timestamp);
-    
+
     expect(result1).toBe(result2);
   });
 

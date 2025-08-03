@@ -11,11 +11,14 @@ import {
   IonIcon,
   IonButtons,
   IonText,
+  IonThumbnail,
+  IonChip,
 } from '@ionic/angular/standalone';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { InboxService } from '@services/inbox.service';
 import { addIcons } from 'ionicons';
-import { openOutline, trashOutline } from 'ionicons/icons';
+import { openOutline, trashOutline, timeOutline } from 'ionicons/icons';
 import { BrazeContentCard } from '@models/braze/braze-content-card';
 import { NgForOf, NgIf } from '@angular/common';
 
@@ -34,14 +37,15 @@ import { NgForOf, NgIf } from '@angular/common';
     IonIcon,
     IonButtons,
     IonText,
-    IonicModule,
+    IonThumbnail,
+    IonChip,
     NgForOf,
     NgIf,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>Inbox</ion-title>
+        <ion-title>Inbox ({{ inboxCards().length }})</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="close()">Close</ion-button>
         </ion-buttons>
@@ -50,15 +54,50 @@ import { NgForOf, NgIf } from '@angular/common';
 
     <ion-content>
       <ion-list>
-        <ion-item *ngFor="let card of inboxCards()">
-          <ion-label (click)="openCard(card)">
-            <h2>{{ card.title }}</h2>
-            <p>{{ card.cardDescription }}</p>
+        <ion-item *ngFor="let card of inboxCards()" class="card-item">
+          <ion-thumbnail slot="start" *ngIf="card.image">
+            <img [src]="card.image" [alt]="card.title" />
+          </ion-thumbnail>
+
+          <ion-label (click)="openCard(card)" class="card-content">
+            <div class="card-header">
+              <h2>{{ card.title }}</h2>
+              <ion-chip
+                *ngIf="card.extras?.subtitle"
+                color="primary"
+                size="small"
+              >
+                {{ card.extras.subtitle }}
+              </ion-chip>
+            </div>
+            <p class="card-description">{{ card.cardDescription }}</p>
+            <div class="card-meta">
+              <ion-text color="medium">
+                <small>
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ getTimeAgo(card.created) }}
+                </small>
+              </ion-text>
+              <ion-text *ngIf="!card.viewed" color="primary">
+                <small>• New</small>
+              </ion-text>
+            </div>
           </ion-label>
-          <ion-button fill="clear" color="primary" (click)="openCard(card)">
+
+          <ion-button
+            fill="clear"
+            color="primary"
+            (click)="openCard(card)"
+            slot="end"
+          >
             <ion-icon slot="icon-only" name="open-outline"></ion-icon>
           </ion-button>
-          <ion-button fill="clear" color="danger" (click)="dismissCard(card)">
+          <ion-button
+            fill="clear"
+            color="danger"
+            (click)="dismissCard(card)"
+            slot="end"
+          >
             <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-button>
         </ion-item>
@@ -69,6 +108,7 @@ import { NgForOf, NgIf } from '@angular/common';
         <ion-text color="medium">
           <h2>No notifications</h2>
           <p>You don't have any messages in your inbox right now.</p>
+          <p>Press "Add Test Notification" to see some sample messages!</p>
         </ion-text>
       </div>
     </ion-content>
@@ -94,16 +134,81 @@ import { NgForOf, NgIf } from '@angular/common';
         margin: 0;
         font-size: 1rem;
       }
+
+      .card-item {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      .card-content {
+        flex: 1;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        flex: 1;
+      }
+
+      .card-description {
+        margin: 4px 0;
+        font-size: 0.9rem;
+        color: var(--ion-color-medium);
+        line-height: 1.4;
+      }
+
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .card-meta ion-icon {
+        font-size: 0.8rem;
+        margin-right: 2px;
+      }
+
+      .card-meta small {
+        font-size: 0.75rem;
+      }
+
+      ion-thumbnail {
+        --size: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      ion-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     `,
   ],
 })
 export class InboxComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly inboxService = inject(InboxService);
+  private readonly router = inject(Router);
   inboxCards = this.inboxService.cards;
 
   constructor() {
-    addIcons({ openOutline, trashOutline });
+    addIcons({ openOutline, trashOutline, timeOutline });
   }
 
   async ngOnInit(): Promise<void> {
@@ -118,29 +223,34 @@ export class InboxComponent implements OnInit {
   }
 
   openCard(card: BrazeContentCard): void {
-    console.log('Opening card:', card);
-    this.inboxService.markAsViewed(card.id);
+    console.log('📋 README FLOW: Opening card:', card.title);
+    this.inboxService.markAsViewed(card);
 
     if (card.url) {
-      if (card.openURLInWebView) {
-        window.open(card.url, '_blank');
-      } else {
-        window.location.href = card.url;
-      }
+      console.log('🔗 README FLOW: Opening URL:', card.url);
+      this.router.navigateByUrl(card.url);
     }
   }
 
   dismissCard(card: BrazeContentCard): void {
-    const confirmDismiss = confirm(
-      'Are you sure you want to dismiss this message?'
-    );
-    if (confirmDismiss) {
-      console.log('Dismissing card:', card);
-      this.inboxService.dismissCard(card.id);
-    }
+    console.log('🗑️ README FLOW: Dismissing card:', card.title);
+    this.inboxService.dismissCard(card);
   }
 
   close(): void {
     this.modalController.dismiss();
+  }
+
+  getTimeAgo(timestamp: number): string {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
   }
 }

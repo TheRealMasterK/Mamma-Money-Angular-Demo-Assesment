@@ -1,13 +1,29 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>main</ion-title>
+    <ion-title>Main Page</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">main</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="ion-padding">
+    <h1>Main Page</h1>
+
+    <ion-button (click)="addTestNotification()" expand="block">
+      Add Test Notification
+    </ion-button>
+
+    <ion-button (click)="sendBrazeEvent()" expand="block" color="secondary">
+      Send Braze Event
+    </ion-button>
+
+    <ion-button (click)="clearInbox()" expand="block" color="danger">
+      Clear Inbox
+    </ion-button>
+
+    <div style="margin-top: 20px">
+      <h3>Debug Info:</h3>
+      <p>Unread Count: {{ unreadCount() }}</p>
+      <p>Total Cards: {{ totalCards().length }}</p>
+    </div>
+  </div>
 </ion-content>
