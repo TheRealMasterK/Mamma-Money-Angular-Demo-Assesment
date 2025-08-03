@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MainPage } from './main.page';
+import { CompletePage } from './complete.page';
 import { IonicModule } from '@ionic/angular';
 
-describe('MainPage', () => {
-  let component: MainPage;
-  let fixture: ComponentFixture<MainPage>;
+describe('CompletePage', () => {
+  let component: CompletePage;
+  let fixture: ComponentFixture<CompletePage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MainPage, IonicModule.forRoot()],
+      imports: [CompletePage, IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MainPage);
+    fixture = TestBed.createComponent(CompletePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -20,9 +20,9 @@ describe('MainPage', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the main page content', () => {
-    const mainContent = fixture.nativeElement.querySelector('ion-content');
-    expect(mainContent).toBeTruthy();
+  it('should display the complete page content', () => {
+    const completeContent = fixture.nativeElement.querySelector('ion-content');
+    expect(completeContent).toBeTruthy();
   });
 
   it('should display the header component', () => {
@@ -30,13 +30,13 @@ describe('MainPage', () => {
     expect(header).toBeTruthy();
   });
 
-  it('should display the inbox button in header', () => {
-    const header = fixture.nativeElement.querySelector('app-header');
-    expect(header).toBeTruthy();
-  });
-
   it('should have proper page structure', () => {
     const page = fixture.nativeElement.querySelector('ion-page');
     expect(page).toBeTruthy();
+  });
+
+  it('should display completion message or content', () => {
+    const content = fixture.nativeElement.querySelector('ion-content');
+    expect(content.textContent).toBeTruthy();
   });
 });
