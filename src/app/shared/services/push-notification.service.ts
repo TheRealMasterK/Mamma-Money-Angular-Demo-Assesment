@@ -8,8 +8,7 @@ import { InboxService } from '@services/inbox.service';
 import { convertToBrazeContentCard } from '@utils/braze/convert-content-card';
 import { BrazeAltPushContentCard } from '@models/braze/braze-push-content-card';
 import * as braze from '@braze/web-sdk';
-import { environment } from '@environments/environment';
-
+import { environment } from 'src/environments/environment.prod';
 @Injectable({
   providedIn: 'root',
 })
