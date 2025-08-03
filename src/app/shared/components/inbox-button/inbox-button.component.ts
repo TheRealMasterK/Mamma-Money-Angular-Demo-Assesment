@@ -61,15 +61,15 @@ import { InboxService } from '@services/inbox.service';
       }
     `,
   ],
-  imports: [IonButton, IonIcon],
+  imports: [IonButton, IonIcon, IonAccordion],
   standalone: true,
 })
 export class InboxButtonComponent implements AfterViewInit {
   readonly slot = input<IonAccordion['toggleIconSlot']>();
   unreadMessages = signal(false);
   private shakeAnimation?: AnimeInstance;
-  private modalController = inject(ModalController);
-  private inboxService = inject(InboxService);
+  private readonly modalController = inject(ModalController);
+  private readonly inboxService = inject(InboxService);
 
   constructor() {
     addIcons({ notificationsOutline });

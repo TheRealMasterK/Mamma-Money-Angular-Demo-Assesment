@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '@components/header/header.component';
 import { MmCardComponent } from '@components/mm-card/mm-card.component';
-import { IonHeader, IonContent, IonButton } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
 import * as braze from '@braze/web-sdk';
 
 @Component({
@@ -38,7 +38,7 @@ import * as braze from '@braze/web-sdk';
     </ion-content> `,
   styles: [],
   standalone: true,
-  imports: [IonHeader, IonContent, IonButton, HeaderComponent, MmCardComponent],
+  imports: [IonicModule, HeaderComponent, MmCardComponent],
 })
 export class HomePage {
   async sendInboxTestEvent(): Promise<void> {
